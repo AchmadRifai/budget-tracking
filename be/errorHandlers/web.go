@@ -18,3 +18,10 @@ func NormalErrorRest(w http.ResponseWriter, r *http.Request) {
 		log.Println(string(debug.Stack()))
 	}
 }
+
+func NormalError() {
+	if err := recover(); err != nil {
+		log.Println("Error", err)
+		log.Println(string(debug.Stack()))
+	}
+}
