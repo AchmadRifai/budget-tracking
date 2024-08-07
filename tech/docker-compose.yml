@@ -1,6 +1,6 @@
 services:
   postgresql:
-    container_name: postgresql
+    container_name: postgresql2
     image: postgres
     environment:
       PGDATA: /data/postgres
