@@ -2,8 +2,9 @@ package models
 
 import (
 	"be/db"
-	errorhandlers "be/errorHandlers"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Role struct {
@@ -47,9 +48,34 @@ type Expense struct {
 }
 
 func InitialTables() {
-	defer errorhandlers.NormalError()
 	conn := db.DbConnect()
 	err := conn.AutoMigrate(&Role{}, &User{}, &Budget{}, &Category{}, &Expense{})
+	if err != nil {
+		panic(err)
+	}
+	err = conn.Transaction(func(tx *gorm.DB) error {
+		var roles []Role
+		result := tx.Find(&roles)
+		if result.Error != nil {
+			return result.Error
+		}
+		if len(roles) == 0 {
+			users := []User{
+				{UserName: "admin", Email: "admin@admin.com", FullName: "admin", Password: "Admin@1234"},
+			}
+			adminRole := Role{Name: "Admin", Users: users}
+			result := tx.Create(&adminRole)
+			if result.Error != nil {
+				return result.Error
+			}
+			userRole := Role{Name: "User"}
+			result = tx.Create(&userRole)
+			if result.Error != nil {
+				return result.Error
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		panic(err)
 	}

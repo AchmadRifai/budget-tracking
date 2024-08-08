@@ -17,7 +17,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	go models.InitialTables()
+	models.InitialTables()
 	r := mux.NewRouter()
 	routers.Routing(r)
 	log.Println("Listening on 8080")
