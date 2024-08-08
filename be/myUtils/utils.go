@@ -49,7 +49,7 @@ func GetUser(r *http.Request) models.User {
 	if !IsValidEmail(pairs[0]) {
 		query = "user_name=? AND password=?"
 	}
-	result := conn.Where(query, pairs[0], pairs[1]).First(&user)
+	result := conn.Preload("Budgets").Preload("Categories").Where(query, pairs[0], pairs[1]).First(&user)
 	if result.Error != nil {
 		panic(result.Error)
 	}
