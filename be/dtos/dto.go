@@ -26,3 +26,10 @@ type NewExpenses struct {
 	Amount     float64 `json:"amount"`
 	Time       int64   `json:"time"`
 }
+
+type ExpensesChart struct {
+	Category string  `json:"category"`
+	Budget   string  `json:"budget"`
+	Month    string  `json:"month"`
+	Amount   float64 `json:"amount"`
+}

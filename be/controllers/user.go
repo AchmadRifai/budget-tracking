@@ -20,6 +20,33 @@ import (
 
 func GetChart(w http.ResponseWriter, r *http.Request) {
 	defer errorhandlers.NormalErrorRest(w, r)
+	user := myutils.GetUser(r)
+	var expenses []models.Expense
+	conn := db.DbConnect()
+	catQuery := conn.Model(&models.Category{}).Where("user_id=?", user.ID).Select("id")
+	budgetQuery := conn.Model(&models.Budget{}).Where("user_id=?", user.ID).Select("id")
+	result := conn.Where("category_id IN(?) AND budget_id IN(?)", catQuery, budgetQuery).Order("expense_time desc").Find(&expenses)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	categories, budgets := user.Categories, user.Budgets
+	charts := make(map[string]map[string]map[string]float64)
+	for _, expense := range expenses {
+		category := arrayutils.Filter(categories, func(v1 models.Category, _ int) bool { return v1.ID == expense.CategoryId })[0]
+		if !myutils.MapKeyExists(charts, category.Name) {
+			charts[category.Name] = make(map[string]map[string]float64)
+		}
+		budget := arrayutils.Filter(budgets, func(v1 models.Budget, _ int) bool { return v1.ID == expense.BudgetId })[0]
+		if !myutils.MapKeyExists(charts[category.Name], budget.Name) {
+			charts[category.Name][budget.Name] = make(map[string]float64)
+		}
+		month := expense.Time.Format("Jan 2006")
+		if !myutils.MapKeyExists(charts[category.Name][budget.Name], month) {
+			charts[category.Name][budget.Name][month] = 0
+		}
+		charts[category.Name][budget.Name][month] = charts[category.Name][budget.Name][month] + expense.Amount
+	}
+	myutils.SendJson(w, map[string]interface{}{"message": "Success", "charts": charts}, 200)
 }
 
 func AddBudget(w http.ResponseWriter, r *http.Request) {

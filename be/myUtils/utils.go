@@ -58,3 +58,12 @@ func GetUser(r *http.Request) models.User {
 	}
 	return user
 }
+
+func MapKeyExists[V interface{}, S comparable](maps map[S]V, key S) bool {
+	for k := range maps {
+		if key == k {
+			return true
+		}
+	}
+	return false
+}
