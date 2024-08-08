@@ -6,7 +6,6 @@ import (
 	errorhandlers "be/errorHandlers"
 	"be/models"
 	myutils "be/myUtils"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"io"
@@ -29,38 +28,11 @@ func Authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer errorhandlers.AuthErrorRest(w, r)
 		if strings.HasPrefix(r.RequestURI, "/dashboard/") {
-			auth := r.Header.Get("Authorization")
-			if auth == "" {
-				panic(errors.New("Authorization is required"))
-			}
-			parts := strings.Split(auth, " ")
-			if len(parts) != 2 || parts[0] != "Basic" {
-				panic(errors.New("invalid basic Auth"))
-			}
-			payload, err := base64.StdEncoding.DecodeString(parts[1])
-			if err != nil {
-				panic(err)
-			}
-			pairs := strings.Split(string(payload), ":")
-			if len(pairs) != 2 {
-				panic(errors.New("user not found"))
-			}
-			conn := db.DbConnect()
-			var user models.User
-			query := "email=? AND password=?"
-			if !myutils.IsValidEmail(pairs[0]) {
-				query = "user_name=? AND password=?"
-			}
-			result := conn.Where(query, pairs[0], pairs[1]).First(&user)
-			if result.Error != nil {
-				panic(result.Error)
-			}
-			if result.RowsAffected == 0 {
-				panic(errors.New("user not found"))
-			}
+			user := myutils.GetUser(r)
 			if strings.HasPrefix(r.RequestURI, "/dashboard/admin/") {
+				conn := db.DbConnect()
 				var role models.Role
-				result = conn.Where("id=?", user.RoleId).First(&role)
+				result := conn.Where("id=?", user.RoleId).First(&role)
 				if result.Error != nil {
 					panic(result.Error)
 				}

@@ -20,4 +20,8 @@ func Routing(r *mux.Router) {
 
 func dashboardRouting(r *mux.Router) {
 	r.HandleFunc("/dashboard/logout", controllers.DashboardLogout).Methods("GET")
+	r.HandleFunc("/dashboard/chart", controllers.GetChart).Methods("GET")
+
+	r.HandleFunc("/dashboard/admin/users", controllers.AllUsers).Methods("GET")
+	r.HandleFunc("/dashboard/admin/users/{id}", controllers.DelUser).Methods("DELETE")
 }
