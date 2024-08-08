@@ -23,10 +23,11 @@ type User struct {
 }
 
 type Budget struct {
-	ID     uint64 `gorm:"primaryKey;autoIncrement"`
-	Name   string `gorm:"column:budget_name;type:varchar(100) not null"`
-	Amount float64
-	UserId uint64
+	ID       uint64 `gorm:"primaryKey;autoIncrement"`
+	Name     string `gorm:"column:budget_name;type:varchar(100) not null"`
+	Amount   float64
+	UserId   uint64
+	Expenses []Expense
 }
 
 type Category struct {
@@ -40,6 +41,7 @@ type Expense struct {
 	ID         uint64    `gorm:"primaryKey;autoIncrement"`
 	Time       time.Time `gorm:"column:expense_time"`
 	Amount     float64
+	BudgetId   uint64
 	CategoryId uint64
 }
 
