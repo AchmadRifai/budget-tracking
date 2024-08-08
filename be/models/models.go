@@ -2,6 +2,7 @@ package models
 
 import (
 	"be/db"
+	errorhandlers "be/errorHandlers"
 	"time"
 )
 
@@ -46,6 +47,7 @@ type Expense struct {
 }
 
 func InitialTables() {
+	defer errorhandlers.NormalError()
 	conn := db.DbConnect()
 	err := conn.AutoMigrate(&Role{}, &User{}, &Budget{}, &Category{}, &Expense{})
 	if err != nil {
