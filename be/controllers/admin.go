@@ -17,7 +17,7 @@ func AllUsers(w http.ResponseWriter, r *http.Request) {
 	defer errorhandlers.NormalErrorRest(w, r)
 	var users []models.User
 	conn := db.DbConnect()
-	result := conn.Find(&users)
+	result := conn.Where("id<>?", 1).Find(&users)
 	if result.Error != nil {
 		panic(result.Error)
 	}
