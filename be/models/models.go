@@ -8,7 +8,6 @@ import (
 type Role struct {
 	ID    uint64 `gorm:"primaryKey;autoIncrement"`
 	Name  string `gorm:"type:varchar(20) not null;column:role_name"`
-	Menus []Menu `gorm:"many2many:role_menu;"`
 	Users []User
 }
 
@@ -21,15 +20,6 @@ type User struct {
 	RoleId     uint64
 	Budgets    []Budget
 	Categories []Category
-}
-
-type Menu struct {
-	ID     uint64  `gorm:"primaryKey;autoIncrement"`
-	Title  string  `gorm:"type:varchar(20) not null"`
-	Icon   *string `gorm:"type:varchar(50) not null"`
-	MenuId *uint64
-	Menus  []Menu
-	Roles  []Role `gorm:"many2many:role_menu;"`
 }
 
 type Budget struct {
@@ -55,7 +45,7 @@ type Expense struct {
 
 func InitialTables() {
 	conn := db.DbConnect()
-	err := conn.AutoMigrate(&Role{}, &Menu{}, &User{}, &Budget{}, &Category{}, &Expense{})
+	err := conn.AutoMigrate(&Role{}, &User{}, &Budget{}, &Category{}, &Expense{})
 	if err != nil {
 		panic(err)
 	}
