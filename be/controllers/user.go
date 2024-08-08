@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	arrayutils "github.com/AchmadRifai/array-utils"
 	"github.com/gorilla/mux"
@@ -282,6 +283,38 @@ func DelCategory(w http.ResponseWriter, r *http.Request) {
 
 func AddExpenses(w http.ResponseWriter, r *http.Request) {
 	defer errorhandlers.NormalErrorRest(w, r)
+	user := myutils.GetUser(r)
+	budgets, categories := user.Budgets, user.Categories
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	var req dtos.NewExpenses
+	if err = json.Unmarshal(body, &req); err != nil {
+		panic(err)
+	}
+	err = db.DbConnect().Transaction(func(tx *gorm.DB) error {
+		if !arrayutils.AnyOf(budgets, func(v models.Budget, _ int) bool { return req.BudgetId == v.ID }) {
+			return errors.New("budget not found")
+		}
+		if !arrayutils.AnyOf(categories, func(v models.Category, _ int) bool { return req.CategoryId == v.ID }) {
+			return errors.New("category not found")
+		}
+		if req.Amount > 0 {
+			return errors.New("amount is required")
+		}
+		times := time.UnixMilli(req.Time)
+		expense := models.Expense{Time: times, Amount: req.Amount, BudgetId: req.BudgetId, CategoryId: req.CategoryId}
+		result := tx.Create(&expense)
+		if result.Error != nil {
+			return result.Error
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	myutils.SendJson(w, map[string]interface{}{"message": "Success"}, 200)
 }
 
 func AllExpenses(w http.ResponseWriter, r *http.Request) {
@@ -307,8 +340,79 @@ func AllExpenses(w http.ResponseWriter, r *http.Request) {
 
 func EditExpenses(w http.ResponseWriter, r *http.Request) {
 	defer errorhandlers.NormalErrorRest(w, r)
+	vars := mux.Vars(r)
+	user := myutils.GetUser(r)
+	budgets, categories := user.Budgets, user.Categories
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	var req dtos.NewExpenses
+	if err = json.Unmarshal(body, &req); err != nil {
+		panic(err)
+	}
+	err = db.DbConnect().Transaction(func(tx *gorm.DB) error {
+		var expense models.Expense
+		result := tx.Where("id=?", vars["id"]).First(&expense)
+		if result.Error != nil {
+			return result.Error
+		}
+		if !arrayutils.AllOf(budgets, func(v models.Budget, _ int) bool { return v.ID == expense.BudgetId }) {
+			return errors.New("budget not found")
+		}
+		if !arrayutils.AllOf(categories, func(v models.Category, _ int) bool { return v.ID == expense.CategoryId }) {
+			return errors.New("category not found")
+		}
+		times := time.UnixMilli(req.Time)
+		if !arrayutils.AnyOf(budgets, func(v models.Budget, _ int) bool { return req.BudgetId == v.ID }) {
+			return errors.New("budget not found")
+		}
+		if !arrayutils.AnyOf(categories, func(v models.Category, _ int) bool { return req.CategoryId == v.ID }) {
+			return errors.New("category not found")
+		}
+		if req.Amount > 0 {
+			return errors.New("amount is required")
+		}
+		expense.Amount = req.Amount
+		expense.BudgetId = req.BudgetId
+		expense.CategoryId = req.CategoryId
+		expense.Time = times
+		result = tx.Save(&expense)
+		if result.Error != nil {
+			return result.Error
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	myutils.SendJson(w, map[string]interface{}{"message": "Success"}, 200)
 }
 
 func DelExpenses(w http.ResponseWriter, r *http.Request) {
 	defer errorhandlers.NormalErrorRest(w, r)
+	vars, user := mux.Vars(r), myutils.GetUser(r)
+	budgets, categories := user.Budgets, user.Categories
+	err := db.DbConnect().Transaction(func(tx *gorm.DB) error {
+		var expense models.Expense
+		result := tx.Where("id=?", vars["id"]).First(&expense)
+		if result.Error != nil {
+			return result.Error
+		}
+		if !arrayutils.AllOf(budgets, func(v models.Budget, _ int) bool { return v.ID == expense.BudgetId }) {
+			return errors.New("budget not found")
+		}
+		if !arrayutils.AllOf(categories, func(v models.Category, _ int) bool { return v.ID == expense.CategoryId }) {
+			return errors.New("category not found")
+		}
+		result = tx.Delete(&expense)
+		if result.Error != nil {
+			return result.Error
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	myutils.SendJson(w, map[string]interface{}{"message": "Success"}, 200)
 }
