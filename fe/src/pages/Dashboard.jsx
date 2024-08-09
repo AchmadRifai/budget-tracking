@@ -3,11 +3,12 @@ import Users from "../features/Users"
 import { useSelector } from "react-redux"
 import Charts from "../features/Charts"
 import Budgets from "../features/Budgets"
+import Categories from "../features/Categories"
 
 const features = [
     <Charts />,
     <Budgets />,
-    <></>,
+    <Categories />,
     <></>,
     <Users />
 ]

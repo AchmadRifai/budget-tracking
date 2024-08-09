@@ -1,5 +1,29 @@
 import axios from 'axios'
 
+export const delCategory = async (auth, id) => {
+    const res = await axios.delete('/api/dashboard/category/' + id, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
+export const editCategory = async (auth, name, id) => {
+    const res = await axios.put('/api/dashboard/category/' + id, { name }, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
+export const addCategory = async (auth, name) => {
+    const res = await axios.post('/api/dashboard/category', { name }, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
+export const category = async (auth) => {
+    const res = await axios.get('/api/dashboard/category', { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
 export const delBudget = async (auth, id) => {
     const res = await axios.delete('/api/dashboard/budget/' + id, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
     if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
