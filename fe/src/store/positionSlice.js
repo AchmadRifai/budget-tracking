@@ -4,7 +4,7 @@ export const positionSlice = createSlice({
     name: 'position',
     initialState: {
         position: 'login',
-        auth: ''
+        auth: localStorage.getItem('auth') || ''
     },
     reducers: {
         setPosition(state, action) {

@@ -9,6 +9,7 @@ import (
 )
 
 func Routing(r *mux.Router) {
+	r.Use(mux.CORSMethodMiddleware(r))
 	r.Use(middlewares.Logging)
 	r.Use(middlewares.Authorization)
 	r.HandleFunc("/hello", controllers.Hello).Methods("GET")

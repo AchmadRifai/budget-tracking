@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
+import Dashboard from "./pages/Dashboard"
 
 function App() {
   const position = useSelector(state => state.position.position)
@@ -10,8 +11,10 @@ function App() {
     <>
       {
         auth === '' ?
-          position === 'login' ? <Login /> : <Register /> :
-          <div></div>
+          position === 'login' ?
+            <Login /> :
+            <Register />
+          : <Dashboard />
       }
     </>
   )
