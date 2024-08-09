@@ -6,15 +6,25 @@ import MyAppBar from '../components/MyAppBar'
 import MyDrawer from '../components/MyDrawer'
 import { useDispatch, useSelector } from "react-redux"
 import Copyright from "../components/Copyright"
-import { setMenu } from "../store/positionSlice"
+import { setAuth, setMenu, setName, setPosition, setRole } from "../store/positionSlice"
+import { dashboardLogout } from "../api/be"
 
 const theme = createTheme()
 
 export default function DashboardLayout({ children }) {
     const dispatch = useDispatch()
-    const name = useSelector(state => state.position.name), role = useSelector(state => state.position.role), menu = useSelector(s => s.position.menu)
-    const [open, setOpen] = useState(true), [loading] = useState(false)
+    const name = useSelector(state => state.position.name), role = useSelector(state => state.position.role), menu = useSelector(s => s.position.menu), auth = useSelector(s => s.position.auth)
+    const [open, setOpen] = useState(true), [loading, setLoading] = useState(false)
     const toggleDrawer = () => setOpen(!open)
+    const loggingOut = () => {
+        setLoading(true)
+        dashboardLogout(auth).then(r => {
+            dispatch(setPosition('login'))
+            dispatch(setName(''))
+            dispatch(setRole(''))
+            dispatch(setAuth(''))
+        }).catch(console.log).finally(() => setLoading(false))
+    }
     return <ThemeProvider theme={theme}>
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -60,7 +70,7 @@ export default function DashboardLayout({ children }) {
                             : <></>
                     }
                     <Divider sx={{ my: 1 }} />
-                    <ListItemButton disabled={loading}>
+                    <ListItemButton disabled={loading} onClick={() => loggingOut()}>
                         <ListItemIcon><Logout /></ListItemIcon>
                         <ListItemText primary='Logout' />
                     </ListItemButton>

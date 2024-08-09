@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"net/http"
 	"net/mail"
 	"strings"
@@ -42,9 +44,10 @@ func GetUser(r *http.Request) models.User {
 	if err != nil {
 		panic(err)
 	}
+	log.Println("Payload", string(payload))
 	pairs := strings.Split(string(payload), ":")
 	if len(pairs) != 2 {
-		panic(errors.New("user not found"))
+		panic(fmt.Errorf("pairs has %d", len(pairs)))
 	}
 	conn := db.DbConnect()
 	var user models.User

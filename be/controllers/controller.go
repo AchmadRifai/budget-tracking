@@ -11,7 +11,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -64,7 +66,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		panic(errors.New("user not found"))
 	}
 	auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", user.UserName, user.Password)))
+	payload, err := base64.StdEncoding.DecodeString(auth)
+	if err != nil {
+		panic(err)
+	}
+	log.Println("Payload", string(payload))
+	pairs := strings.Split(string(payload), ":")
+	if len(pairs) != 2 {
+		panic(fmt.Errorf("pairs has %d", len(pairs)))
+	}
+	if user.UserName != pairs[0] || user.Password != pairs[1] {
+		panic(fmt.Errorf("pairs has %s and %s", user.UserName, user.Password))
+	}
 	w.Header().Add("Authorization", auth)
+	log.Println("Authorization", auth)
 	myutils.SendJson(w, map[string]interface{}{"message": "Success", "role": role.Name, "name": user.FullName}, 200)
 }
 
