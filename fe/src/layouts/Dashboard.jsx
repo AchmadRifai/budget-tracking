@@ -20,6 +20,7 @@ export default function DashboardLayout({ children }) {
         setLoading(true)
         dashboardLogout(auth).then(r => {
             dispatch(setPosition('login'))
+            dispatch(setMenu(0))
             dispatch(setName(''))
             dispatch(setRole(''))
             dispatch(setAuth(''))

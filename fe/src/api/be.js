@@ -1,5 +1,11 @@
 import axios from 'axios'
 
+export const getChart = async (auth) => {
+    const res = await axios.get('/api/dashboard/chart', { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
 export const adminDeleteUser = async (auth, id) => {
     const res = await axios.delete('/api/dashboard/admin/users/' + id, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
     if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)

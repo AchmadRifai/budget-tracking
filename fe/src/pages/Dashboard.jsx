@@ -1,9 +1,10 @@
 import DashboardLayout from "../layouts/Dashboard"
 import Users from "../features/Users"
 import { useSelector } from "react-redux"
+import Charts from "../features/Charts"
 
 const features = [
-    <></>,
+    <Charts />,
     <></>,
     <></>,
     <></>,

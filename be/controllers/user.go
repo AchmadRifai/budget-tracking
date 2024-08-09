@@ -32,19 +32,19 @@ func GetChart(w http.ResponseWriter, r *http.Request) {
 	categories, budgets := user.Categories, user.Budgets
 	charts := make(map[string]map[string]map[string]float64)
 	for _, expense := range expenses {
-		category := arrayutils.Filter(categories, func(v1 models.Category, _ int) bool { return v1.ID == expense.CategoryId })[0]
-		if !myutils.MapKeyExists(charts, category.Name) {
-			charts[category.Name] = make(map[string]map[string]float64)
-		}
 		budget := arrayutils.Filter(budgets, func(v1 models.Budget, _ int) bool { return v1.ID == expense.BudgetId })[0]
-		if !myutils.MapKeyExists(charts[category.Name], budget.Name) {
-			charts[category.Name][budget.Name] = make(map[string]float64)
+		if !myutils.MapKeyExists(charts, budget.Name) {
+			charts[budget.Name] = make(map[string]map[string]float64)
+		}
+		category := arrayutils.Filter(categories, func(v1 models.Category, _ int) bool { return v1.ID == expense.CategoryId })[0]
+		if !myutils.MapKeyExists(charts[category.Name], category.Name) {
+			charts[budget.Name][category.Name] = make(map[string]float64)
 		}
 		month := expense.Time.Format("Jan 2006")
-		if !myutils.MapKeyExists(charts[category.Name][budget.Name], month) {
-			charts[category.Name][budget.Name][month] = 0
+		if !myutils.MapKeyExists(charts[budget.Name][category.Name], month) {
+			charts[budget.Name][category.Name][month] = 0
 		}
-		charts[category.Name][budget.Name][month] = charts[category.Name][budget.Name][month] + expense.Amount
+		charts[budget.Name][category.Name][month] = charts[budget.Name][category.Name][month] + expense.Amount
 	}
 	myutils.SendJson(w, map[string]interface{}{"message": "Success", "charts": charts}, 200)
 }
