@@ -1,8 +1,18 @@
-import { Grid } from "@mui/material"
 import DashboardLayout from "../layouts/Dashboard"
+import Users from "../features/Users"
+import { useSelector } from "react-redux"
+
+const features = [
+    <></>,
+    <></>,
+    <></>,
+    <></>,
+    <Users />
+]
 
 export default function Dashboard() {
+    const menu = useSelector(s => s.position.menu)
     return <DashboardLayout>
-        <Grid item xs={12} md={8} lg={9}></Grid>
+        {features[menu]}
     </DashboardLayout>
 }
