@@ -3,7 +3,7 @@ import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typ
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import Copyright from '../components/Copyright'
 import { useDispatch } from 'react-redux'
-import { setAuth, setPosition } from '../store/positionSlice'
+import { setAuth, setPosition, setRole, } from '../store/positionSlice'
 import { useState } from 'react'
 import { login } from '../api/be'
 
@@ -19,6 +19,7 @@ export default function Login() {
         login(data.get('username'), data.get('password')).then(r => {
             console.log(r)
             localStorage.setItem('auth', r.header.authorization)
+            dispatch(setRole(r.body.role))
             dispatch(setPosition('dashboard'))
             dispatch(setAuth(r.header.authorization))
         }).catch(e => {
