@@ -13,7 +13,12 @@ export default function Dashboard() {
             localStorage.clear()
             dispatch(setPosition('login'))
             dispatch(setAuth(''))
-        }).catch(console.log).finally(() => setLoading(false))
+        }).catch(e => {
+            console.log(e)
+            localStorage.clear()
+            dispatch(setPosition('login'))
+            dispatch(setAuth(''))
+        }).finally(() => setLoading(false))
     }
     return <Button onClick={() => loggingOut()} disabled={loading}>Logout</Button>
 }
