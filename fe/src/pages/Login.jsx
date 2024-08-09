@@ -2,10 +2,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import Copyright from '../components/Copyright'
+import { useDispatch } from 'react-redux'
+import { setPosition } from '../store/positionSlice'
 
 const defaultTheme = createTheme()
 
 export default function Login() {
+    const dispatch = useDispatch()
     return <ThemeProvider theme={defaultTheme}>
         <Container component='main' maxWidth='xs'>
             <CssBaseline />
@@ -20,7 +23,7 @@ export default function Login() {
                     <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>Sign In</Button>
                     <Grid container>
                         <Grid item>
-                            <Link href='#' variant='body2'>Sign Up</Link>
+                            <Link onClick={() => dispatch(setPosition('register'))} href='#' variant='body2'>Sign Up</Link>
                         </Grid>
                     </Grid>
                 </Box>
