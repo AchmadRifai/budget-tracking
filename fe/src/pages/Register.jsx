@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux"
-import { setAuth, setPosition, setRole } from "../store/positionSlice"
+import { setAuth, setName, setPosition, setRole } from "../store/positionSlice"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, Typography } from "@mui/material"
 import Copyright from "../components/Copyright"
@@ -18,8 +18,8 @@ export default function Register() {
         const data = new FormData(e.currentTarget)
         register(`${data.get('firstName')} ${data.get('lastName')}`, data.get('username'), data.get('password'), data.get('email')).then(r => {
             console.log(r)
-            localStorage.setItem('auth', r.header.authorization)
             dispatch(setRole(r.body.role))
+            dispatch(setName(r.body.name))
             dispatch(setPosition('dashboard'))
             dispatch(setAuth(r.header.authorization))
         }).catch(console.log).finally(() => setLoading(false))

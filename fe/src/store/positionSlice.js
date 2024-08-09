@@ -4,8 +4,10 @@ export const positionSlice = createSlice({
     name: 'position',
     initialState: {
         position: 'login',
-        auth: localStorage.getItem('auth') || '',
-        role: ''
+        auth: '',
+        role: '',
+        name: '',
+        menu: 0
     },
     reducers: {
         setPosition(state, action) {
@@ -16,10 +18,16 @@ export const positionSlice = createSlice({
         },
         setRole(state, action) {
             state.role = action.payload
+        },
+        setName(state, action) {
+            state.name = action.payload
+        },
+        setMenu(state, action) {
+            state.menu = action.payload
         }
     }
 })
 
-export const { setAuth, setPosition, setRole } = positionSlice.actions
+export const { setAuth, setMenu, setName, setPosition, setRole } = positionSlice.actions
 
 export default positionSlice.reducer

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const dashboardLogout = async () => {
-    const res = await axios.get('/api/dashboard/logout', { headers: { Authorization: localStorage.getItem('auth'), "Content-Type": "application/json" } })
+    const res = await axios.get('/api/dashboard/logout', { headers: { Authorization: `Basic ${localStorage.getItem('auth')}`, "Content-Type": "application/json" } })
     if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
     return res.data
 }
