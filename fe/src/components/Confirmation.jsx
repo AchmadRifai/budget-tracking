@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
 import { useState } from "react"
 
-export default function Confirmation({ onClose, buttonText, onYes }) {
+export default function Confirmation({ onClose, buttonText, onYes, disabled }) {
     const [open, setOpen] = useState(false)
     const closing = () => {
         setOpen(false)
@@ -13,7 +13,7 @@ export default function Confirmation({ onClose, buttonText, onYes }) {
     }
     const openning = () => setOpen(true)
     return <>
-        <Button onClick={() => openning()} aria-hidden='false' variant="outlined">{buttonText}</Button>
+        <Button disabled={disabled} onClick={() => openning()} aria-hidden='false' variant="outlined">{buttonText}</Button>
         <Dialog onClose={() => closing()} open={open}>
             <DialogTitle>Confirmation</DialogTitle>
             <DialogContent>

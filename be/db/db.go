@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,5 +17,12 @@ func DbConnect() *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
+	sqlDb, err := database.DB()
+	if err != nil {
+		panic(err)
+	}
+	sqlDb.SetMaxIdleConns(10)
+	sqlDb.SetMaxOpenConns(50)
+	sqlDb.SetConnMaxLifetime(time.Minute)
 	return database
 }
