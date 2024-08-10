@@ -1,5 +1,37 @@
 import axios from 'axios'
 
+export const delExpenses = async (auth, id) => {
+    const res = await axios.delete('/api/dashboard/expenses/' + id, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
+export const editExpenses = async (auth, category_id, budget_id, amount, time, id) => {
+    const res = await axios.put('/api/dashboard/expenses/' + id, { category_id, budget_id, amount, time }, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
+export const addExpenses = async (auth, category_id, budget_id, amount, time) => {
+    console.log({ category_id, budget_id, amount, time })
+    const res = await axios.post('/api/dashboard/expenses', { category_id, budget_id, amount, time }, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
+export const expenses = async (auth) => {
+    const res = await axios.get('/api/dashboard/expenses', { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
+    if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)
+    return res.data
+}
+
+export const preEditExpenses = async auth => {
+    const results = {}
+    results.categories = await category(auth)
+    results.budgets = await budget(auth)
+    return results
+}
+
 export const delCategory = async (auth, id) => {
     const res = await axios.delete('/api/dashboard/category/' + id, { headers: { 'Authorization': `Basic ${auth}`, "Content-Type": "application/json" } })
     if (res.status !== 200) throw new Error(`${res.status} is ${res.statusText}`)

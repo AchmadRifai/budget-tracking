@@ -22,7 +22,7 @@ export default function Categories() {
     }, [])
     return <Grid item xs={12}>
         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>Budgets</Typography>
+            <Typography component="h2" variant="h6" color="primary" gutterBottom>Categories</Typography>
             <Table size="small">
                 <TableHead>
                     <TableRow>

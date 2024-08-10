@@ -327,10 +327,10 @@ func AddExpenses(w http.ResponseWriter, r *http.Request) {
 		if !arrayutils.AnyOf(categories, func(v models.Category, _ int) bool { return req.CategoryId == v.ID }) {
 			return errors.New("category not found")
 		}
-		if req.Amount > 0 {
+		if req.Amount <= 0 {
 			return errors.New("amount is required")
 		}
-		times := time.UnixMilli(req.Time)
+		times := time.Unix(req.Time, 0)
 		expense := models.Expense{Time: times, Amount: req.Amount, BudgetId: req.BudgetId, CategoryId: req.CategoryId}
 		result := tx.Create(&expense)
 		if result.Error != nil {
@@ -360,7 +360,7 @@ func AllExpenses(w http.ResponseWriter, r *http.Request) {
 	data := arrayutils.Map(expenses, func(v models.Expense, _ int) map[string]interface{} {
 		category := arrayutils.Filter(categories, func(v2 models.Category, _ int) bool { return v.CategoryId == v2.ID })[0]
 		budget := arrayutils.Filter(budgets, func(v2 models.Budget, _ int) bool { return v.BudgetId == v2.ID })[0]
-		return map[string]interface{}{"id": v.ID, "time": v.Time.UnixMilli(), "category": category.Name, "budget": budget.Name}
+		return map[string]interface{}{"id": v.ID, "time": v.Time.Unix(), "category": category.Name, "budget": budget.Name, "amount": v.Amount}
 	})
 	myutils.SendJson(w, map[string]interface{}{"message": "Success", "data": data}, 200)
 }
@@ -390,14 +390,14 @@ func EditExpenses(w http.ResponseWriter, r *http.Request) {
 		if !arrayutils.AllOf(categories, func(v models.Category, _ int) bool { return v.ID == expense.CategoryId }) {
 			return errors.New("category not found")
 		}
-		times := time.UnixMilli(req.Time)
+		times := time.Unix(req.Time, 0)
 		if !arrayutils.AnyOf(budgets, func(v models.Budget, _ int) bool { return req.BudgetId == v.ID }) {
 			return errors.New("budget not found")
 		}
 		if !arrayutils.AnyOf(categories, func(v models.Category, _ int) bool { return req.CategoryId == v.ID }) {
 			return errors.New("category not found")
 		}
-		if req.Amount > 0 {
+		if req.Amount <= 0 {
 			return errors.New("amount is required")
 		}
 		expense.Amount = req.Amount

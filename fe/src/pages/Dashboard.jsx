@@ -4,12 +4,13 @@ import { useSelector } from "react-redux"
 import Charts from "../features/Charts"
 import Budgets from "../features/Budgets"
 import Categories from "../features/Categories"
+import Expenses from "../features/Expenses"
 
 const features = [
     <Charts />,
     <Budgets />,
     <Categories />,
-    <></>,
+    <Expenses />,
     <Users />
 ]
 
